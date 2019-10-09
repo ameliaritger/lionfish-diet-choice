@@ -1,0 +1,50 @@
+---
+title: "lionfishanalysis_kb_v3"
+author: "Kim Bourne"
+date: "May 15, 2018"
+output: pdf_document
+fontsize: 12pt
+---
+
+```{r,echo = FALSE, results = "hide", include = FALSE}
+setwd('C:/Users/Kimberly Bourne/Box Sync/Lionfish-Amelia')
+data_all <- read.csv('lionfishdata.csv')
+
+data_x <-data.frame(Starve_time = data_all$Starvationtime_hours,
+                    cloudcover = data_all$Cloudcover,sex = data_all$Sex,
+                    lf_std_length = data_all$Lionfishstandardlength_cm, lf_wetwgt = data_all$LionfishWetWeight_g,
+                    mooncycle = data_all$Mooncycle,depthcaptured = data_all$Depthcaptured_m,bodycond = data_all$BodyCondition,Lionfish_totlength = data_all$Lionfishtotallength_cm)
+counts <- data.frame(N_chromis = data_all$Numberchromisconsumed, N_goby = data_all$Numbergobyconsumed,N_wrasse = data_all$Numberwrasseconsumed)
+```
+
+Using zCompositions, I replaced the zero proportions for the count data. Since sqrt(n) > D, the SQ method was used for the bayesian-multiplicative treatment.
+
+```{r}
+# Use zCompositions to replace zeros using bayesian multiplicative methods
+library('zCompositions')
+c_tot <- counts$N_chromis + counts$N_wrasse + counts$N_goby
+
+p <- cbind(counts$N_chromis/c_tot,counts$N_wrasse/c_tot,counts$N_goby/c_tot) # proportions of each species based on total eaten
+rep_p <- cmultRepl(p,method = "SQ",output = "counts") # proportions data with zeros replaced
+colnames(p) <- c("P_chromis","P_wrasse","P_goby")
+props_sum <- numeric()
+for (i in 1:20){props_sum <- c(props_sum, sum(p[i,]))}
+props_sum
+```
+
+I inserted my own ilr transform function at this point, because I could not find anything on the transformation matrix that the built in function used. I used the Helmert matrix because I found the interpretation to be intuitive.
+
+```{r}
+library('compositions')
+## ilr transform of proportions
+rep_p_m <- as.matrix(rep_p)
+ilr <- function(x, p=0) {
+  y <- log(x/geometricmeanRow(x))
+  k <- dim(y)[2]
+  H <- contr.helmert(k)                       # Dimensions k by k-1
+  H <- t(H) / sqrt((2:k)*(2:k-1))             # Dimensions k-1 by k
+  return(y %*% t(H))                          # Rotated/reflected values
+}
+p_ilr <- ilr(rep_p_m)
+colnames(p_ilr) <- c("C_W","CW_G")
+```
