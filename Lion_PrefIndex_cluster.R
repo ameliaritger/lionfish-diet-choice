@@ -1,7 +1,8 @@
 # Lion fish preference index
 # june 2018
 #setwd("~/Documents/1_RECERCA/3_ARTICLES_EN_PREPAR/article_Pierotti_Leon/Kimber/boxduke1314")
-setwd('C:/Users/Kimberly Bourne/Box Sync/Lionfish-Amelia')
+#setwd('C:/Users/Kimberly Bourne/Box Sync/Lionfish-Amelia')
+setwd('E:/Box Sync/Lionfish-Amelia')
 #
 ###############################################################
 # save.image("lionfish.RData")
@@ -218,6 +219,8 @@ lindexS_biom <- as.data.frame(lindexS_biom)
   library(cluster)    # clustering algorithms
   library(factoextra) # clustering algorithms & visualization
   cfit <- kmeans(clusdata, 2)
+  
+  rownames(clusdata) <- data_all$Sex
   fviz_cluster(cfit, data = clusdata, xlab = "Body Condition",ylab ="Selectivity Index",main = "")
   
   set.seed(123)
@@ -230,9 +233,9 @@ lindexS_biom <- as.data.frame(lindexS_biom)
   ######################################
   
   library(rpart)
-  treemodel <- rpart(lindex_count ~ Bodycondition,clusdata)
+  treemodel <- rpart(lindex_count ~ Bodycondition,data = clusdata)
   library(rpart.plot)
-  rpart.plot(treemodel,cex = 0.75,digits = 3)
+  rpart.plot(treemodel,cex = 0.75,digits = 4)
   
   tree.predict <- predict(treemodel)
   plot(clusdata$Bodycondition[which(tree.predict < 4)],clusdata$lindex_count[which(tree.predict < 4)],col = 'blue',
@@ -241,16 +244,45 @@ lindexS_biom <- as.data.frame(lindexS_biom)
   points(clusdata$Bodycondition[which(tree.predict > 4)],clusdata$lindex_count[which(tree.predict > 4)],col = 'red')
   
   ######################################
+  reg_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindexS_count)
+  
+  breaks <- seq(0.011,0.017,by = 0.0001)
+  mse <- numeric()
+  for (b in breaks){
+    piecewise <- lm(lindexS_count ~ (Bodycondition > b), data = reg_data)
+    mse <- rbind(mse,c(b,as.numeric(sqrt(mean(summary(piecewise)$residuals^2))),as.numeric(summary(piecewise)$r.squared)))
+  }
+  
+  b <- mse[which(mse[,2] == min(mse[,2])),1]
+  b <- 0.0138
+  
+  piecewise1 <- lm(lindexS_count ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition < b),])
+  piecewise2 <- lm(lindexS_count ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition > b),])
+  pred1 <- predict(piecewise1,newdata = data.frame(Bodycondition = breaks[breaks < b]))
+  pred2 <- predict(piecewise2,newdata = data.frame(Bodycondition = breaks[breaks > b]))
+  
+  
+  plot(reg_data$Bodycondition[reg_data$Bodycondition < b ],reg_data$lindexS_count[reg_data$Bodycondition < b ],col = "blue",
+       xlim=range(reg_data$Bodycondition),ylim = range(reg_data$lindexS_count), xlab = "Body condition", ylab = "Selectivity Index", bty = "n",pch = 16)
+  points(reg_data$Bodycondition[reg_data$Bodycondition > b ],reg_data$lindexS_count[reg_data$Bodycondition > b ],col = "red",pch = 17)
+  lines(breaks[breaks < b],pred1)
+  ######################################
+  normal <- function (d){
+    return(1-exp(-d))
+  }
+  
   reg_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindex_count)
   
   breaks <- seq(0.011,0.017,by = 0.0001)
   mse <- numeric()
   for (b in breaks){
-    piecewise <- lm(lindex_count ~ Bodycondition*(Bodycondition < b) + Bodycondition*(Bodycondition > b), data = reg_data)
-    mse <- rbind(mse,c(b,as.numeric(summary(piecewise)[6])))
+    piecewise <- lm(lindex_count ~ (Bodycondition > b), data = reg_data)
+    mse <- rbind(mse,c(b,as.numeric(sqrt(mean(summary(piecewise)$residuals^2))),as.numeric(summary(piecewise)$r.squared)))
   }
   
-  b <- mse[which(mse[,2] == min(mse[,2])),1]  
+  b <- mean(mse[which(mse[,2] == min(mse[,2])),1])
+  #b <- 0.0138
+  piecewise <- lm(lindex_count ~ (Bodycondition > b), data = reg_data)
   
   piecewise1 <- lm(lindex_count ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition < b),])
   piecewise2 <- lm(lindex_count ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition > b),])
@@ -258,8 +290,50 @@ lindexS_biom <- as.data.frame(lindexS_biom)
   pred2 <- predict(piecewise2,newdata = data.frame(Bodycondition = breaks[breaks > b]))
   
   
+  plot(reg_data$Bodycondition[reg_data$Bodycondition < b ],normal(reg_data$lindex_count[reg_data$Bodycondition < b ]),col = "blue",
+       xlim=range(reg_data$Bodycondition),ylim = range(normal(reg_data$lindex_count)), xlab = "Body condition", ylab = "Selectivity Index", bty = "n",pch = 16)
+  points(reg_data$Bodycondition[reg_data$Bodycondition > b ],normal(reg_data$lindex_count[reg_data$Bodycondition > b ]),col = "red",pch = 17)
+  lines(breaks[breaks < b],normal(pred1),lwd =  2)
+  lines(breaks[breaks > b],normal(pred2),lwd =  2)
+  
   plot(reg_data$Bodycondition[reg_data$Bodycondition < b ],reg_data$lindex_count[reg_data$Bodycondition < b ],col = "blue",
        xlim=range(reg_data$Bodycondition),ylim = range(reg_data$lindex_count), xlab = "Body condition", ylab = "Selectivity Index", bty = "n",pch = 16)
   points(reg_data$Bodycondition[reg_data$Bodycondition > b ],reg_data$lindex_count[reg_data$Bodycondition > b ],col = "red",pch = 17)
-  lines(breaks[breaks < b],pred1)
+  lines(breaks[breaks < b],pred1,lwd =  2)
+  lines(breaks[breaks > b],pred2,lwd =  2)
   
+  plot(reg_data$Bodycondition[reg_data$Bodycondition < b ],reg_data$lindex_count[reg_data$Bodycondition < b ],col = "blue",
+       xlim=range(reg_data$Bodycondition),ylim = range(reg_data$lindex_count), xlab = "Body condition", ylab = "Selectivity Index", bty = "n",pch = 16)
+  points(reg_data$Bodycondition[reg_data$Bodycondition > b ],reg_data$lindex_count[reg_data$Bodycondition > b ],col = "red",pch = 17)
+  lines(breaks,predict(piecewise,newdata = data.frame(Bodycondition = breaks)))
+  
+
+###From Amelia
+library(ggplot2)
+library(tidyverse)
+library(grid)
+#create new column for each category
+norm_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindexS_count)
+norm_data$category <- ifelse(norm_data$Bodycondition<b, "A", "B") #or b is 0.0138
+
+#plot
+a <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count)) +
+  geom_point(aes(color=category, shape=category), size=2, show.legend=FALSE) +
+  labs(x="Body condition", y="Index of Selectivity") +
+  scale_y_continuous(limits=c(0,1.02), #change min and max values on x axis
+                     expand=c(0,0),
+                     breaks=c(0,0.2,0.4,0.6,0.8,1.0)) +
+  scale_x_continuous(limits=c(0.0105, 0.0185)) +
+  geom_hline(yintercept=0.99, linetype="dashed", color="orange", size=1) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.99, ymax = Inf, fill = "orange", alpha = .2, color = NA) +
+  #annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0.99, fill = "pink", alpha = .3, color = NA) +
+  theme_classic() +
+  theme(plot.margin=unit(c(1,3.5,0,0), "cm")) +
+  #annotate("text", x=0.02, y=1.0, label="lionfish are not selective", size=2.5) +
+  geom_text(aes(label = "active prey choice", x = 0.018, y = 1.0, hjust = -0.21, vjust = 0), size=4, colour="#666666")
+
+# Disable clip-area.
+gt <- ggplot_gtable(ggplot_build(a))
+gt$layout$clip[gt$layout$name == "panel"] <- "off"
+grid.draw(gt)
+ 
