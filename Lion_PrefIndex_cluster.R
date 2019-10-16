@@ -317,20 +317,26 @@ norm_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindexS_
 norm_data$category <- ifelse(norm_data$Bodycondition<b, "A", "B") #or b is 0.0138
 
 #plot
-a <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count)) +
-  geom_point(aes(color=category, shape=category), size=2, show.legend=FALSE) +
-  labs(x="Body condition", y="Index of Selectivity") +
-  scale_y_continuous(limits=c(0,1.02), #change min and max values on x axis
+a <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count, color=category)) +
+  geom_hline(yintercept=0.99, linetype="dashed", color="#F0E442", size=1) + #add prey preference line
+  annotate("rect", xmin = -Inf, xmax = 0.0184, ymin = 0.99, ymax = Inf, fill = "#F0E442", alpha = .3, color = NA) + #add prey preference olor
+  geom_hline(yintercept=0.03, linetype="dashed", color="#E69F00", size=1) + #add no preference line
+  annotate("rect", xmin = -Inf, xmax = 0.0184, ymin = -Inf, ymax = 0.03, fill = "#E69F00", alpha = .2, color = NA) + #add no preference color
+  geom_text(aes(label = "no prey preference", x = 0.0183, y = 0.01, hjust = -0.215, vjust = 0), size=4, colour="#666666") + #add text
+  geom_text(aes(label = "strong prey preference", x = 0.018, y = 1.0, hjust = -0.215, vjust = 0), size=4, colour="#666666") + #add text
+  geom_point(aes(shape=category), size=3, alpha=0.9, show.legend=FALSE) + #plot points
+  scale_color_manual(values=c("#0072B2", "#CC79A7")) + #manually change point colors
+  labs(x="Body condition", y="Index of Selectivity") + #change axis labels
+  theme_classic() + #remove background crap
+  theme(plot.margin=unit(c(1,4.5,0,0), "cm")) + #extend plot area to allow text
+  #annotate("text", x=0.02, y=1.0, label="lionfish are not selective", size=2.5) +
+  coord_cartesian(xlim = c(0.0105, 0.018), clip="off") + #limit plot area
+  scale_y_continuous(limits=c(0,1.02), #change min and max values on y axis
                      expand=c(0,0),
                      breaks=c(0,0.2,0.4,0.6,0.8,1.0)) +
-  scale_x_continuous(limits=c(0.0105, 0.0185)) +
-  geom_hline(yintercept=0.99, linetype="dashed", color="orange", size=1) +
-  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.99, ymax = Inf, fill = "orange", alpha = .2, color = NA) +
-  #annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0.99, fill = "pink", alpha = .3, color = NA) +
-  theme_classic() +
-  theme(plot.margin=unit(c(1,3.5,0,0), "cm")) +
-  #annotate("text", x=0.02, y=1.0, label="lionfish are not selective", size=2.5) +
-  geom_text(aes(label = "active prey choice", x = 0.018, y = 1.0, hjust = -0.21, vjust = 0), size=4, colour="#666666")
+  scale_x_continuous(limits=c(0.0105, 0.0185)) #change min and max values on x axis
+  #annotation_custom(grob = linesGrob(), xmin = 0.019, xmax = 0.019, ymin = 0.05, ymax = 0.95) +
+  #annotation_custom(grob = linesGrob(), xmin = 0.0195, xmax = 0.019, ymin = 0.05, ymax = 0.15)
 
 # Disable clip-area.
 gt <- ggplot_gtable(ggplot_build(a))
