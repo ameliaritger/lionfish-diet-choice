@@ -322,13 +322,13 @@ a <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count, color=category)) +
   annotate("rect", xmin = -Inf, xmax = 0.0184, ymin = 0.99, ymax = Inf, fill = "#F0E442", alpha = .3, color = NA) + #add prey preference olor
   geom_hline(yintercept=0.03, linetype="dashed", color="#E69F00", size=1) + #add no preference line
   annotate("rect", xmin = -Inf, xmax = 0.0184, ymin = -Inf, ymax = 0.03, fill = "#E69F00", alpha = .2, color = NA) + #add no preference color
-  geom_text(aes(label = "no prey preference", x = 0.0183, y = 0.01, hjust = -0.215, vjust = 0), size=4, colour="#666666") + #add text
-  geom_text(aes(label = "strong prey preference", x = 0.018, y = 1.0, hjust = -0.215, vjust = 0), size=4, colour="#666666") + #add text
+  annotate("text", x = 0.0183, y = 0.01, hjust = -0.215, vjust = 0, label="no prey preference", color = "black", size=3.5) +
+  annotate("text", x = 0.018, y = 1.0, hjust = -0.215, vjust = 0, label="strong prey preference", color = "black", size=3.5) +
   geom_point(aes(shape=category), size=3, alpha=0.9, show.legend=FALSE) + #plot points
   scale_color_manual(values=c("#0072B2", "#CC79A7")) + #manually change point colors
   labs(x="Body condition", y="Index of Selectivity") + #change axis labels
   theme_classic() + #remove background crap
-  theme(plot.margin=unit(c(1,4.5,0,0), "cm")) + #extend plot area to allow text
+  theme(plot.margin=unit(c(1,3.6,0,0), "cm")) + #extend plot area to allow text
   #annotate("text", x=0.02, y=1.0, label="lionfish are not selective", size=2.5) +
   coord_cartesian(xlim = c(0.0105, 0.018), clip="off") + #limit plot area
   scale_y_continuous(limits=c(0,1.02), #change min and max values on y axis
