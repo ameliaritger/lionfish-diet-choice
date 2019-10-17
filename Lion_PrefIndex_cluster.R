@@ -243,7 +243,8 @@ lindexS_biom <- as.data.frame(lindexS_biom)
        ylab = "Selectivity Index",xlab = "Body Condition")
   points(clusdata$Bodycondition[which(tree.predict > 4)],clusdata$lindex_count[which(tree.predict > 4)],col = 'red')
   
-  ######################################
+######################################
+  ## For normalized (0,1) data
   reg_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindexS_count)
   
   breaks <- seq(0.011,0.017,by = 0.0001)
@@ -254,7 +255,7 @@ lindexS_biom <- as.data.frame(lindexS_biom)
   }
   
   b <- mse[which(mse[,2] == min(mse[,2])),1]
-  b <- 0.0138
+  b <- 0.0124
   
   piecewise1 <- lm(lindexS_count ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition < b),])
   piecewise2 <- lm(lindexS_count ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition > b),])
@@ -266,7 +267,9 @@ lindexS_biom <- as.data.frame(lindexS_biom)
        xlim=range(reg_data$Bodycondition),ylim = range(reg_data$lindexS_count), xlab = "Body condition", ylab = "Selectivity Index", bty = "n",pch = 16)
   points(reg_data$Bodycondition[reg_data$Bodycondition > b ],reg_data$lindexS_count[reg_data$Bodycondition > b ],col = "red",pch = 17)
   lines(breaks[breaks < b],pred1)
-  ######################################
+######################################
+  ## For non-normalized (1,8) data
+  
   normal <- function (d){
     return(1-exp(-d))
   }
@@ -327,6 +330,8 @@ a <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count, color=category)) +
   geom_point(aes(shape=category), size=3, alpha=0.9, show.legend=FALSE) + #plot points
   scale_color_manual(values=c("#0072B2", "#CC79A7")) + #manually change point colors
   labs(x="Body condition", y="Index of Selectivity") + #change axis labels
+  geom_segment(x=0.011,xend=b,y=mean(pred1), yend=mean(pred1), colour="#0072B2") + #add group 1 mean line
+  geom_segment(x=b,xend=0.018,y=mean(pred2), yend=mean(pred2), colour="#CC79A7") + #add group 2 mean line
   theme_classic() + #remove background crap
   theme(plot.margin=unit(c(1,3.6,0,0), "cm")) + #extend plot area to allow text
   #annotate("text", x=0.02, y=1.0, label="lionfish are not selective", size=2.5) +
