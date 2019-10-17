@@ -330,11 +330,12 @@ a <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count, color=category)) +
   theme_classic() + #remove background crap
   theme(plot.margin=unit(c(1,3.6,0,0), "cm")) + #extend plot area to allow text
   #annotate("text", x=0.02, y=1.0, label="lionfish are not selective", size=2.5) +
-  coord_cartesian(xlim = c(0.0105, 0.018), clip="off") + #limit plot area
+  coord_cartesian(xlim = c(0.011, 0.018), clip="off") + #limit plot area
   scale_y_continuous(limits=c(0,1.02), #change min and max values on y axis
                      expand=c(0,0),
                      breaks=c(0,0.2,0.4,0.6,0.8,1.0)) +
-  scale_x_continuous(limits=c(0.0105, 0.0185)) #change min and max values on x axis
+  scale_x_continuous(limits=c(0.011, 0.0185),
+                     breaks=c(0.010,0.012,0.014,0.016,0.018)) #change min and max values on x axis
   #annotation_custom(grob = linesGrob(), xmin = 0.019, xmax = 0.019, ymin = 0.05, ymax = 0.95) +
   #annotation_custom(grob = linesGrob(), xmin = 0.0195, xmax = 0.019, ymin = 0.05, ymax = 0.15)
 
