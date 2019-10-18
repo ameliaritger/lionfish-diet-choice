@@ -242,7 +242,15 @@ lindexS_biom <- as.data.frame(lindexS_biom)
        ylim = c(min(clusdata$lindex_count),max(clusdata$lindex_count)),xlim = c(min(clusdata$Bodycondition),max(clusdata$Bodycondition)),
        ylab = "Selectivity Index",xlab = "Body Condition")
   points(clusdata$Bodycondition[which(tree.predict > 4)],clusdata$lindex_count[which(tree.predict > 4)],col = 'red')
-  
+
+
+######################################
+######################################
+# Martin's normalization + linear adjustment
+a<-0 #min possible value
+b<-8 #max possible value
+lindex <- (lindex_count-a)/(b-a) #USE THESE VALUES
+
 ######################################
   ## For normalized (0,1) data
   reg_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = m_vals)
@@ -321,18 +329,12 @@ library(ggplot2)
 library(tidyverse)
 library(grid)
 #create new column for each category
-m_vals <- c(0.3910320,0.8060268,0.8858582,0.9512384,
-              0.8849834,0.2409091,0.8849834,0.9512384,
-              0.4328384,0.9026623,0.7808563,0.7808563,
-              0.9512384,0.7808563,0.2535109,0.0614866,
-              0.1900790,0.8849834,0.4328384,0.7979252)
-norm_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindexS_count,Index_martin = m_vals)
-norm_data$category <- ifelse(norm_data$Bodycondition<b, "A", "B") #or b is 0.0138
-
-m_a <- 
+norm_data <-  data.frame(data_all$BodyCondition,lindex)
+names(norm_data) <- c("bodycondition", "lindex")
+norm_data$category <- ifelse(norm_data$bodycondition<b, "A", "B") #or b is 0.0138
 
 #plot with colored thresholds
-a <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count, color=category)) +
+a <- ggplot(norm_data, aes(x=bodycondition, y=lindex, color=category)) +
   geom_hline(yintercept=0.99, linetype="dashed", color="#F0E442", size=1) + #add prey preference line
   annotate("rect", xmin = -Inf, xmax = 0.0184, ymin = 0.99, ymax = Inf, fill = "#F0E442", alpha = .3, color = NA) + #add prey preference olor
   geom_hline(yintercept=0.03, linetype="dashed", color="#E69F00", size=1) + #add no preference line
@@ -361,7 +363,7 @@ gt$layout$clip[gt$layout$name == "panel"] <- "off"
 grid.draw(gt)
  
 # plot without thresholds
-c <- ggplot(norm_data, aes(x=Bodycondition, y=Index_martin, group=category)) +
+c <- ggplot(norm_data, aes(x=bodycondition, y=lindex, group=category)) +
   #geom_hline(yintercept=0.99, linetype="dashed", color="#F0E442", size=1) + #add prey preference line
   #annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.99, ymax = Inf, fill = "#F0E442", alpha = .3, color = NA) + #add prey preference color
   #geom_hline(yintercept=0.03, linetype="dashed", color="#E69F00", size=1) + #add no preference line
