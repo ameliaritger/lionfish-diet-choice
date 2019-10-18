@@ -245,20 +245,25 @@ lindexS_biom <- as.data.frame(lindexS_biom)
   
 ######################################
   ## For normalized (0,1) data
-  reg_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindexS_count)
+  reg_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = m_vals)
   
-  breaks <- seq(0.011,0.017,by = 0.0001)
+  breaks <- seq(0.011,0.018,by = 0.0001)
   mse <- numeric()
   for (b in breaks){
-    piecewise <- lm(lindexS_count ~ (Bodycondition > b), data = reg_data)
+    piecewise <- lm(m_vals ~ (Bodycondition > b), data = reg_data)
     mse <- rbind(mse,c(b,as.numeric(sqrt(mean(summary(piecewise)$residuals^2))),as.numeric(summary(piecewise)$r.squared)))
   }
   
   b <- mse[which(mse[,2] == min(mse[,2])),1]
   b <- 0.0124
   
-  piecewise1 <- lm(lindexS_count ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition < b),])
-  piecewise2 <- lm(lindexS_count ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition > b),])
+  piecewise1 <- lm(m_vals ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition < b),])
+  piecewise2 <- lm(m_vals ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition > b),])
+  
+  piecewise <- lm(m_vals ~ (Bodycondition > b), data = reg_data)
+  m_1 <- 0.3989 #mean group 1
+  m_2 <- m_1+0.3863 #mean group 2
+  
   pred1 <- predict(piecewise1,newdata = data.frame(Bodycondition = breaks[breaks < b]))
   pred2 <- predict(piecewise2,newdata = data.frame(Bodycondition = breaks[breaks > b]))
   
@@ -276,7 +281,7 @@ lindexS_biom <- as.data.frame(lindexS_biom)
   
   reg_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindex_count)
   
-  breaks <- seq(0.011,0.017,by = 0.0001)
+  breaks <- seq(0.011,0.018,by = 0.0001)
   mse <- numeric()
   for (b in breaks){
     piecewise <- lm(lindex_count ~ (Bodycondition > b), data = reg_data)
@@ -316,8 +321,15 @@ library(ggplot2)
 library(tidyverse)
 library(grid)
 #create new column for each category
-norm_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindexS_count)
+m_vals <- c(0.3910320,0.8060268,0.8858582,0.9512384,
+              0.8849834,0.2409091,0.8849834,0.9512384,
+              0.4328384,0.9026623,0.7808563,0.7808563,
+              0.9512384,0.7808563,0.2535109,0.0614866,
+              0.1900790,0.8849834,0.4328384,0.7979252)
+norm_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = lindexS_count,Index_martin = m_vals)
 norm_data$category <- ifelse(norm_data$Bodycondition<b, "A", "B") #or b is 0.0138
+
+m_a <- 
 
 #plot
 a <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count, color=category)) +
@@ -349,7 +361,7 @@ gt$layout$clip[gt$layout$name == "panel"] <- "off"
 grid.draw(gt)
  
 # alternative plot
-c <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count, group=category)) +
+c <- ggplot(norm_data, aes(x=Bodycondition, y=Index_martin, group=category)) +
   #geom_hline(yintercept=0.99, linetype="dashed", color="#F0E442", size=1) + #add prey preference line
   #annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.99, ymax = Inf, fill = "#F0E442", alpha = .3, color = NA) + #add prey preference color
   #geom_hline(yintercept=0.03, linetype="dashed", color="#E69F00", size=1) + #add no preference line
@@ -367,8 +379,8 @@ c <- ggplot(norm_data, aes(x=Bodycondition, y=lindexS_count, group=category)) +
            color="black",
            size=1,
            arrow=arrow(length=unit(0.08,"npc"))) + #add arrow
-#geom_segment(x=0.011,xend=b,y=mean(pred1), yend=mean(pred1), colour="#0072B2") + #add group 1 mean line
-  #geom_segment(x=b,xend=0.018,y=mean(pred2), yend=mean(pred2), colour="#CC79A7") + #add group 2 mean line
+  geom_segment(x=0.011,xend=b,y=m_1, yend=m_1, colour="#0072B2") + #add group 1 mean line
+  geom_segment(x=b,xend=0.018,y=m_2, yend=m_2, colour="#CC79A7") + #add group 2 mean line
   theme_classic() + #remove background crap
   theme(plot.margin=unit(c(1,3.6,0,0), "cm")) + #extend plot area to allow text
   scale_y_continuous(limits=c(0,1.02), #change min and max values on y axis
