@@ -2,13 +2,13 @@
 # june 2018
 #setwd("~/Documents/1_RECERCA/3_ARTICLES_EN_PREPAR/article_Pierotti_Leon/Kimber/boxduke1314")
 #setwd('C:/Users/Kimberly Bourne/Box Sync/Lionfish-Amelia')
-setwd('E:/Box Sync/Lionfish-Amelia')
+#setwd('E:/Box Sync/Lionfish-Amelia')
 #
 ###############################################################
 # save.image("lionfish.RData")
 # load("lionfish.RData")
 ###############################################################
-
+##RUN THIS
 data_all <- read.csv('lionfishdata.csv')
 
 data_x <-data.frame(Starve_time = data_all$Starvationtime_hours,
@@ -243,45 +243,49 @@ lindexS_biom <- as.data.frame(lindexS_biom)
        ylab = "Selectivity Index",xlab = "Body Condition")
   points(clusdata$Bodycondition[which(tree.predict > 4)],clusdata$lindex_count[which(tree.predict > 4)],col = 'red')
 
-
+  
 ######################################
 ######################################
 # Martin's normalization + linear adjustment
 a<-0 #min possible value
 b<-8 #max possible value
-lindex <- (lindex_count-a)/(b-a) #USE THESE VALUES
+nlindex <- dplyr::pull((lindex_count-a)/(b-a)) #USE THESE VALUES
 
 ######################################
-  ## For normalized (0,1) data
-  reg_data <-  data.frame(Bodycondition = data_all$BodyCondition,Index = m_vals)
+## For normalized (0,1) non-linear data
+reg_data <-  data.frame(Bodycondition = data_all$BodyCondition, Index=nlindex)
   
-  breaks <- seq(0.011,0.018,by = 0.0001)
-  mse <- numeric()
+breaks <- seq(0.011,0.018,by = 0.0001)
+mse <- numeric()
   for (b in breaks){
-    piecewise <- lm(m_vals ~ (Bodycondition > b), data = reg_data)
+    piecewise <- lm(Index ~ (Bodycondition > b), data = reg_data)
     mse <- rbind(mse,c(b,as.numeric(sqrt(mean(summary(piecewise)$residuals^2))),as.numeric(summary(piecewise)$r.squared)))
   }
   
   b <- mse[which(mse[,2] == min(mse[,2])),1]
   b <- 0.0124
   
-  piecewise1 <- lm(m_vals ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition < b),])
-  piecewise2 <- lm(m_vals ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition > b),])
+  piecewise1 <- lm(Index ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition < b),])
+  piecewise2 <- lm(Index ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition > b),])
   
-  piecewise <- lm(m_vals ~ (Bodycondition > b), data = reg_data)
+  piecewise <- lm(Index ~ (Bodycondition > b), data = reg_data)
+  summary(piecewise)
   m_1 <- 0.3989 #mean group 1
-  m_2 <- m_1+0.3863 #mean group 2
+  m_2 <- m_1+0.3763 #mean group 2
   
   pred1 <- predict(piecewise1,newdata = data.frame(Bodycondition = breaks[breaks < b]))
   pred2 <- predict(piecewise2,newdata = data.frame(Bodycondition = breaks[breaks > b]))
   
   
+######################################
+######################################  
+##DON'T RUN THIS
   plot(reg_data$Bodycondition[reg_data$Bodycondition < b ],reg_data$lindexS_count[reg_data$Bodycondition < b ],col = "blue",
        xlim=range(reg_data$Bodycondition),ylim = range(reg_data$lindexS_count), xlab = "Body condition", ylab = "Selectivity Index", bty = "n",pch = 16)
   points(reg_data$Bodycondition[reg_data$Bodycondition > b ],reg_data$lindexS_count[reg_data$Bodycondition > b ],col = "red",pch = 17)
   lines(breaks[breaks < b],pred1)
 ######################################
-  ## For non-normalized (1,8) data
+  ## For non-normalized (1,8) data; don't run this for plots
   
   normal <- function (d){
     return(1-exp(-d))
@@ -323,15 +327,18 @@ lindex <- (lindex_count-a)/(b-a) #USE THESE VALUES
   points(reg_data$Bodycondition[reg_data$Bodycondition > b ],reg_data$lindex_count[reg_data$Bodycondition > b ],col = "red",pch = 17)
   lines(breaks,predict(piecewise,newdata = data.frame(Bodycondition = breaks)))
   
-
+  
+######################################
+######################################
+#BUT RUN THIS
 ###From Amelia
 library(ggplot2)
 library(tidyverse)
 library(grid)
 #create new column for each category
-norm_data <-  data.frame(data_all$BodyCondition,lindex)
-names(norm_data) <- c("bodycondition", "lindex")
-norm_data$category <- ifelse(norm_data$bodycondition<b, "A", "B") #or b is 0.0138
+norm_data <-  data.frame(BC = data_all$BodyCondition, Index =reg_data$Index)
+#names(norm_data) <- c("bodycondition", "lindex")
+norm_data$category <- ifelse(norm_data$BC<b, "A", "B")
 
 #plot with colored thresholds
 a <- ggplot(norm_data, aes(x=bodycondition, y=lindex, color=category)) +
@@ -363,7 +370,7 @@ gt$layout$clip[gt$layout$name == "panel"] <- "off"
 grid.draw(gt)
  
 # plot without thresholds
-c <- ggplot(norm_data, aes(x=bodycondition, y=lindex, group=category)) +
+c <- ggplot(norm_data, aes(x=BC, y=Index, group=category)) +
   #geom_hline(yintercept=0.99, linetype="dashed", color="#F0E442", size=1) + #add prey preference line
   #annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.99, ymax = Inf, fill = "#F0E442", alpha = .3, color = NA) + #add prey preference color
   #geom_hline(yintercept=0.03, linetype="dashed", color="#E69F00", size=1) + #add no preference line
