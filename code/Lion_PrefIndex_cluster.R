@@ -8,8 +8,9 @@
 # save.image("lionfish.RData")
 # load("lionfish.RData")
 ###############################################################
+library(here)
 ##RUN THIS
-data_all <- read.csv('lionfishdata.csv')
+data_all <- read.csv(here::here("data","lionfishdata.csv"))
 
 data_x <-data.frame(Starve_time = data_all$Starvationtime_hours,
                     cloudcover = data_all$Cloudcover,sex = data_all$Sex,
