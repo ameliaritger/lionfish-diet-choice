@@ -266,13 +266,22 @@ mse <- numeric()
   b <- mse[which(mse[,2] == min(mse[,2])),1]
   b <- 0.0124
   
-  piecewise1 <- lm(Index ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition < b),])
-  piecewise2 <- lm(Index ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition > b),])
+## Two sample t-test to compare group means
+library(car)
+reg_data$group[reg_data$Bodycondition > b] <- 2
+reg_data$group[reg_data$Bodycondition < b] <- 1
+reg_data$group <- as.factor(reg_data$group)
+leveneTest(reg_data$Index, reg_data$group) #not signficant, variance can be considered equal (TRUE)
+t.test(reg_data$Index~reg_data$group,var.equal=TRUE)
+plot(reg_data$Index~reg_data$group)
+
+#piecewise1 <- lm(Index ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition < b),])
+#piecewise2 <- lm(Index ~ Bodycondition, data = reg_data[which(reg_data$Bodycondition > b),])
   
-  piecewise <- lm(Index ~ (Bodycondition > b), data = reg_data)
-  summary(piecewise)
-  m_1 <- 0.3989 #mean group 1
-  m_2 <- m_1+0.3763 #mean group 2
+piecewise <- lm(Index ~ (Bodycondition > b), data = reg_data)
+summary(piecewise)
+m_1 <- 0.3989 #mean group 1
+m_2 <- m_1+0.3763 #mean group 2
   
   pred1 <- predict(piecewise1,newdata = data.frame(Bodycondition = breaks[breaks < b]))
   pred2 <- predict(piecewise2,newdata = data.frame(Bodycondition = breaks[breaks > b]))
