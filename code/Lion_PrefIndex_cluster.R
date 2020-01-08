@@ -385,21 +385,21 @@ c <- ggplot(norm_data, aes(x=BC, y=Index, group=category)) +
   #annotate("rect", xmin = -Inf, xmax = Inf, ymin = 0.99, ymax = Inf, fill = "#F0E442", alpha = .3, color = NA) + #add prey preference color
   #geom_hline(yintercept=0.03, linetype="dashed", color="#E69F00", size=1) + #add no preference line
   #annotate("rect", xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = 0.03, fill = "#E69F00", alpha = .2, color = NA) + #add no preference color
-  annotate("text", x = 0.018, y = 0.01, hjust = -0.4, vjust = 0, label="no prey preference", color = "black", size=5) +
-  annotate("text", x = 0.018, y = 1.0, hjust = -0.215, vjust = 0, label="strong prey preference", color = "black", size=5) +
+  #annotate("text", x = 0.018, y = 0.01, hjust = -0.4, vjust = 0, label="no prey preference", color = "black", size=6) +
+  #annotate("text", x = 0.018, y = 1.0, hjust = -0.215, vjust = 0, label="strong prey preference", color = "black", size=6) +
   #annotate("text", x = 0.0175, y = 0.065, label="no prey preference", color = "black", size=4) +
   #annotate("text", x = 0.0175, y = 0.95, label="strong prey preference", color = "black", size=4) +
   geom_segment(x=0.0108,xend=b,y=m_1, yend=m_1, size=1.5, linetype="dashed", color="black") + #add group 1 mean line
   geom_segment(x=b,xend=0.018,y=m_2, yend=m_2, size=1.5, linetype="dotted", color="black") + #add group 2 mean line
-  geom_point(aes(color=category, fill=category), shape=21, size=5, alpha=0.9, show.legend=FALSE) + #plot points
+  geom_point(aes(color=category, fill=category), shape=21, size=7, alpha=0.9, show.legend=FALSE) + #plot points
   scale_color_manual(values=c("grey19", "black")) + #manually change point colors
   scale_fill_manual(values=c("black", "white")) +
   labs(x="Body condition", y="Index of Selectivity") + #change axis labels
   #annotate("segment", x=0.0175, xend=0.0175, y=0.915, yend=0.085, color="black", size=1, arrow=arrow(length=unit(0.08,"npc"))) + #add arrow
   theme_classic() + #remove background crap
-  theme(plot.margin=unit(c(1,5.5,0.2,0.2), "cm"),
-        axis.text=element_text(size=14),
-        axis.title=element_text(size=17)) + #extend plot area to allow text
+  theme(plot.margin=unit(c(4,5,4,4), "cm"),
+        axis.text=element_text(size=24),
+        axis.title=element_text(size=30)) + #extend plot area to allow text
   scale_y_continuous(limits=c(0,1.02), #change min and max values on y axis
                      expand=c(0,0),
                      breaks=c(0,0.2,0.4,0.6,0.8,1.0)) +
@@ -412,4 +412,4 @@ gt <- ggplot_gtable(ggplot_build(c))
 gt$layout$clip[gt$layout$name == "panel"] <- "off"
 grid.draw(gt)
 
-
+ggsave("fig2.png", plot=gt, width=14, height=10)
