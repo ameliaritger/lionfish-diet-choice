@@ -8,8 +8,7 @@ fontsize: 12pt
 
 ```{r}
 ###### read in data #######
-setwd('C:/Users/Kimberly Bourne/Box Sync/Lionfish-Amelia')
-data_all <- read.csv('lionfishdata.csv')
+data_all <- read.csv('data/lionfishdata.csv')
 counts <- data.frame(N_chromis = data_all$Numberchromisconsumed, N_goby = data_all$Numbergobyconsumed,N_wrasse = data_all$Numberwrasseconsumed)
 ```
 
