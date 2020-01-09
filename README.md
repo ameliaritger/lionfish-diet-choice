@@ -5,9 +5,11 @@ file name | file overview | description
 ---|---|-----------
 Lion_PrefIndex_cluster.R | Statistical analysis and Figures | compositional data analysis - application of ilr transformation and creation of index of selectivity; creation of Fig 2
 
-## Metadata
-lionfishdata.csv | Raw data
+## Metadata for lionfishdata.csv
 Each row represents one individual lionfish	
+
+variable | description
+---|---
 Sample No. |	Lionfish number
 Date captured	| Capture date of lionfish
 Time captured	| Capture time of lionfish
