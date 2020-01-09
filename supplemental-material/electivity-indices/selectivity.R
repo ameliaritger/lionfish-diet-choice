@@ -1,20 +1,20 @@
 library(selectapref)
+library(here)
 #download.packages(pkgs="selectapref",destdir = "~/Desktop",type = "source")
 
 ivlev <- function(available, consumed, jacob = FALSE) {
-      r <- consumed/sum(consumed)
-      p <- available/sum(available)
-      if(jacob == TRUE) {
-            return ((r-p)/(r+p-(2*r*p)))
-      }
-      else {
-            return ((r-p)/(r+p))
-      }
+   r <- consumed/sum(consumed)
+   p <- available/sum(available)
+   if(jacob == TRUE) {
+      return ((r-p)/(r+p-(2*r*p)))
+   }
+   else {
+      return ((r-p)/(r+p))
+   }
 }
 
-setwd("~/Desktop")
-eaten <- read.csv('elect.csv')
-offer <- read.csv('elect2.csv')
+eaten <- read.csv(here::here("supplemental-material", "electivity-indices","elect.csv"))
+offer <- read.csv(here::here("supplemental-material", "electivity-indices","elect2.csv"))
 
 ##Ivlev's
 "a"<-ivlev(consumed = eaten$Lionfish.1, available = offer$Lionfish.1, jacob = FALSE)
