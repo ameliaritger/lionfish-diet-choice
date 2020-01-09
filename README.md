@@ -54,15 +54,15 @@ Total fish consumed	| Total number fish consumed / total number fish provided
 *Estimated biomass for each prey species based on established averages of weights and lengths
 
 ## Figures (extracted from Ritger et al, 2020)
-![Alt text](/figures/fig1.png?raw=true)
+![Alt text](/media/fig1.png?raw=true)
 **Figure 1** (A) Schematic diagram of enclosure dimensions and experimental design. (B) Holding cages were located proximal to enclosures and (C) maintained lionfish in isolation and without food prior to predation trials.
 
-![Alt text](/figures/fig2.png?raw=true)
+![Alt text](/media/fig2.png?raw=true)
 **Figure 2** Relationship between lionfish body condition and index of selectivity. Lionfish with higher body condition had a significantly higher mean index of selectivity than lionfish with lower body condition. Point shape indicates significantly different groups, separated by a body condition value of 0.0124. The dashed and dotted lines represent the mean index of selectivity of lionfish from each group.
 
-![Alt text](/figures/fig3.png?raw=true)
+![Alt text](/media/fig3.png?raw=true)
 **Figure 3** Ternary diagram showing index of selectivity values from predation trials. Most lionfish exhibited some or strong preference for brown chromis. Each point in the ternary diagram represents the index of selectivity of an individual lionfish. The size of each point indicates the number of lionfish sharing an index of selectivity. Disproportionate consumption of prey shifts a point away from the + symbol, representing prey consumption proportional to prey availability (in accordance with the 11:11:55 ratio of prey offered), towards a corner representing the targeted prey species. The ○ symbol represents the geometric mean of lionfish prey consumption across all predation trials. The dashed contour lines depict the index of selectivity at 0.1 increments.
 
 
 ## Curious what an experiment looked like?
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://vimeo.com/165007470)
+[![Watch the video](/media/foraging-trial-video.png?raw=true)](https://vimeo.com/165007470)
