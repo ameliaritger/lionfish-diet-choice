@@ -1,0 +1,121 @@
+---
+title: "lionfishanalysis_kim_M"
+#####
+## WARNING: My comments after a "M:"
+#####
+author: "Kim Bourne_revMartin"
+date: "May 31, 2018"
+output: pdf_document
+fontsize: 12pt
+---
+
+```{r,echo = FALSE, results = "hide", include = FALSE}
+#setwd('C:/Users/Kimberly Bourne/Box Sync/Lionfish-Amelia')
+setwd("~/Documents/1_RECERCA/3_ARTICLES_EN_PREPAR/article_Pierotti_Leon/Kimber/boxduke1314")
+data_all <- read.csv('lionfishdata.csv')
+
+data_x <-data.frame(Starve_time = data_all$Starvationtime_hours,
+                    cloudcover = data_all$Cloudcover,sex = data_all$Sex,
+                    lf_std_length = data_all$Lionfishstandardlength_cm, lf_wetwgt = data_all$LionfishWetWeight_g,
+                    mooncycle = data_all$Mooncycle,depthcaptured = data_all$Depthcaptured_m,bodycond = data_all$BodyCondition,Lionfish_totlength = data_all$Lionfishtotallength_cm)
+counts <- data.frame(N_chromis = data_all$Numberchromisconsumed, N_goby = data_all$Numbergobyconsumed,N_wrasse = data_all$Numberwrasseconsumed)
+```
+
+Using zCompositions, I replaced the zero proportions for the count data. Since sqrt(n) > D, the SQ method was used for the bayesian-multiplicative treatment.
+
+```{r}
+# Use zCompositions to replace zeros using bayesian multiplicative methods
+library('zCompositions')
+c_tot <- counts$N_chromis + counts$N_wrasse + counts$N_goby
+
+p <- cbind(counts$N_chromis/c_tot,counts$N_wrasse/c_tot,counts$N_goby/c_tot) # proportions of each species based on total eaten
+rep_p2 <- cmultRepl(counts,method = "SQ") # M: argument are counts; value are proportions
+rep_count<-rep_p2*c_tot # M: pseudo-counts matrix
+#################
+rep_p <- cmultRepl(p,method = "SQ",output = "counts") # proportions data with zeros replaced
+# M: your argument are proportions. Be careful because the function requires counts
+##############
+colnames(p)=colnames(rep_p2) <- c("P_chromis","P_wrasse","P_goby")
+props_sum <- numeric()
+for (i in 1:20){props_sum <- c(props_sum, sum(p[i,]))}
+props_sum
+apply(counts,1,sum) # M: initial total "counts" sum
+apply(rep_count,1,sum) # M: total "counts" sum after replacement: preserved 
+apply(rep_p2,1,sum) # M: total sum of proportions : 1
+apply(rep_p,1,sum)# M: here you can see the mistake because is not equal to one
+#####
+## M: general comment:
+### we are using "SQ", however, following Martin-Fernandez et al (2015) the "GBM" methods gives also reasonable results.
+
+```
+
+I inserted my own ilr transform function at this point, because I could not find anything on the transformation matrix that the built in function used. I used the Helmert matrix because I found the interpretation to be intuitive.
+
+```{r}
+library('compositions')
+## ilr transform of proportions
+rep_p_m <- as.matrix(rep_p)
+ilr <- function(x, p=0) {
+  y <- log(x/geometricmeanRow(x))
+  k <- dim(y)[2]
+  H <- contr.helmert(k)                       # Dimensions k by k-1
+  H <- t(H) / sqrt((2:k)*(2:k-1))             # Dimensions k-1 by k
+  return(y %*% t(H))                          # Rotated/reflected values
+}
+p_ilr <- ilr(rep_p_m)
+colnames(p_ilr) <- c("C_W","CW_G")
+```
+
+```{r}
+# M: function fsbp2ilr: function to transform partitions (SBP) to ilr-basis
+##
+fsbp2ilr<-function(s){
+  # given a vector (or a set of vectors) of a SBP formed by 0,+1,-1 
+  # returns the ilr-vector (or set of) or balance
+  # author: Martin (2015)
+  
+  bal=s
+  
+  if(is.null(dim(s))) 
+  {
+       
+    den<-sum(bal==-1)
+    num<-sum(bal==1)  
+    bal[s==1]<-sqrt(den/((den+num)*num))
+    bal[s==-1]<--sqrt(num/((den+num)*den))
+    
+    
+  }
+  else
+  {
+    numsbp=dim(s)[1]
+    for (f in 1:numsbp) {
+      den<-sum(bal[f,]==-1)
+      num<-sum(bal[f,]==1)  
+      bal[f,bal[f,]==1]<-sqrt(den/((den+num)*num))
+      bal[f,bal[f,]==-1]<--sqrt(num/((den+num)*den))
+      
+    }
+    
+  }
+  
+  return(bal)
+}
+## M: END function
+########
+### M: EXAMPLE of ilr-coordinates
+### M: form one SBP matrix for 3-compositions U3
+tU3=as.matrix(fsbp2ilr(rbind(c(1,-1,-1),c(0,1,-1)))) # 
+U3=t(tU3)
+###
+ilr_rep_count<-log(as.matrix(rep_count))%*%U3 # M: compute ilr-coordinates
+colnames(ilr_rep_count)<-c('ilr1','ilr2')
+ilr_rep_count # M: ilr-coordinates of replaced data set
+### M: example: how to do the INVERSE ilr-FUCNTION ?
+inv_ilr_rep_prop<-exp(ilr_rep_count%*%tU3) # M: exponential
+inv_ilr_rep_prop<-inv_ilr_rep_prop/apply(inv_ilr_rep_prop,1,sum) # M: closure to 1
+inv_ilr_rep_count<-inv_ilr_rep_prop*c_tot # M: recover the pseudo counts
+apply(inv_ilr_rep_count,1,sum) # M: the same total than "count" matrix
+### M: as you see you don't need the package to calculate ilr-coordinates and you can decide the SBP as regards your goal in the study
+
+```
