@@ -1,9 +1,7 @@
 # Lion fish preference index
-# june 2018
-#setwd("~/Documents/1_RECERCA/3_ARTICLES_EN_PREPAR/article_Pierotti_Leon/Kimber/boxduke1314")
-#setwd('C:/Users/Kimberly Bourne/Box Sync/Lionfish-Amelia')
-#setwd('E:/Box Sync/Lionfish-Amelia')
-#
+# june 2018 written
+# Cleaned by Amelia Ritger in January 2020
+
 ###############################################################
 # save.image("lionfish.RData")
 # load("lionfish.RData")
