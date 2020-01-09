@@ -12,6 +12,7 @@ Ternary_plots.R | Plotting ternary diagram | creation of Figure 3
 
 ## Metadata for "lionfishdata.csv"
 *Data has been cleaned from /outdated-materials/All_data_Sept8 for analysis*
+
 Each row represents one individual lionfish	
 
 variable | description
@@ -52,7 +53,7 @@ Total fish consumed	| Total number fish consumed / total number fish provided
 
 *Estimated biomass for each prey species based on established averages of weights and lengths
 
-## Figures (extracted from Ritger et al 2020)
+## Figures (extracted from Ritger et al, 2020)
 ![Alt text](/figures/fig1.png?raw=true)
 **Figure 1** (A) Schematic diagram of enclosure dimensions and experimental design. (B) Holding cages were located proximal to enclosures and (C) maintained lionfish in isolation and without food prior to predation trials.
 
