@@ -1,6 +1,6 @@
-setwd("~/Desktop")
-data<-read.csv('Curacao fish surveys.csv')
-colnames(data)[colnames(data)=="ï..Species"] <- "Species"
+library(here)
+data<-read.csv(here::here("supplemental-material","Curacao fish surveys.csv"))
+colnames(data)[colnames(data)=="?..Species"] <- "Species"
 number_ticks <- function(n) {function(limits) pretty(limits, n)}
 library(ggplot2)
 
