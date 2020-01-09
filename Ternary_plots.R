@@ -2,9 +2,6 @@
 #======================
 #======================
 # 2019 JANUARY 
-# DEFINE WORKING DIRECTORY
-# 
-setwd("~/Desktop/Enclosures/Enclosure statistics/Final")
 ####################
 # LOAD data provided by AMELIA & KIM
 # full data
