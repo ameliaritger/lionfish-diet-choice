@@ -1,5 +1,6 @@
 Here you will find the repository for the Ritger et al 2020 paper, *"Diet choice in a generalist predator, the invasive lionfish (Pterois volitans/miles)"*. The repository is maintained by Amelia Ritger (GitHub: @ameliaritger) at the University of California, Santa Barbara in the Department of Ecology, Evolution, & Marine Biology.
 
+![Alt text](/media/pro_amelia_lionfish.jpg?raw=true | height=100, width=100)
 
 **Abstract:** Diet choice in marine species is typically derived from indirect methods such as stomach contents and stable isotope analysis, while choice experiments in controlled laboratory settings are used to infer foraging decisions in the wild. However, these methods are limited in their capacity to make inferences about foraging decisions by predators in variable environments or recreate the array of factors (such as prey traits, predator condition, and environmental conditions) present in natural systems which may interact to affect diet decisions by predators. Recent work has provided evidence for selectivity in the invasive Indo-Pacific lionfish (Pterois volitans/miles) despite the predator’s apparent opportunistic, generalist feeding behavior. We directly tested diet choice by presenting wild-caught lionfish with multi-species prey assemblages in field enclosures. We offered lionfish equal biomasses of prey species sharing similar prey traits that are both highly abundant on coral reefs and prevalent in the lionfish diet across the invaded range. We then applied compositional analyses to determine relative prey consumption given prey availability. We observed lionfish selectively foraging on prey and manifesting strong consistent preferences for one prey species. Additionally, we observed condition-dependent foraging behavior, as lionfish with higher body conditions were more likely to exhibit selective foraging behavior. Our findings provide direct evidence for diet choice in an invasive generalist species and highlight the importance of preserving the ecological complexity of natural ecosystems in choice experiments, particularly when investigating predator-prey interactions in complex environments.
 
@@ -55,14 +56,18 @@ Total fish consumed	| Total number fish consumed / total number fish provided
 
 ## Figures (extracted from Ritger et al, 2020)
 ![Alt text](/media/fig1.png?raw=true)
+
 **Figure 1** (A) Schematic diagram of enclosure dimensions and experimental design. (B) Holding cages were located proximal to enclosures and (C) maintained lionfish in isolation and without food prior to predation trials.
 
 ![Alt text](/media/fig2.png?raw=true)
+
 **Figure 2** Relationship between lionfish body condition and index of selectivity. Lionfish with higher body condition had a significantly higher mean index of selectivity than lionfish with lower body condition. Point shape indicates significantly different groups, separated by a body condition value of 0.0124. The dashed and dotted lines represent the mean index of selectivity of lionfish from each group.
 
 ![Alt text](/media/fig3.png?raw=true)
+
 **Figure 3** Ternary diagram showing index of selectivity values from predation trials. Most lionfish exhibited some or strong preference for brown chromis. Each point in the ternary diagram represents the index of selectivity of an individual lionfish. The size of each point indicates the number of lionfish sharing an index of selectivity. Disproportionate consumption of prey shifts a point away from the + symbol, representing prey consumption proportional to prey availability (in accordance with the 11:11:55 ratio of prey offered), towards a corner representing the targeted prey species. The ○ symbol represents the geometric mean of lionfish prey consumption across all predation trials. The dashed contour lines depict the index of selectivity at 0.1 increments.
 
 
 ## Curious what the experiment looked like?
+*Clicking this will take you to the video*
 [![Watch the video](/media/foraging-trial-video.png?raw=true)](https://vimeo.com/165007470)
